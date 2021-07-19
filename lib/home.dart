@@ -16,12 +16,8 @@ final BannerAd myBanner = BannerAd(
 );
 
 class _HomeState extends State<Home> {
-  List<bool> check = [];
   @override
   void initState() {
-    for (var i = 0; i < 500; i++) {
-      check.add(false);
-    }
     myBanner.load();
     super.initState();
   }
@@ -74,7 +70,7 @@ class _HomeState extends State<Home> {
           //
           if (snapshot.hasData) {
             snapshot.data?.forEach((item) {
-              children.add(_item(item.idItem, item.nombreItem, item.cantidad));
+              children.add(_item(item));
             });
           } else if (snapshot.hasError) {
           } else {
@@ -106,26 +102,28 @@ class _HomeState extends State<Home> {
         });
   }
 
-  Widget _item(int? id, String nombre, double cantidad) {
+  Widget _item(ItemModel itemRecibido) {
+    ItemModel item = new ItemModel();
+    item = itemRecibido;
     return Dismissible(
       key: UniqueKey(),
       background: Container(color: Colors.red),
       onDismissed: (direction) {
-        _delete(id);
+        _delete(item.idItem);
       },
       child: Column(
         children: [
           ListTile(
             title: Row(
               children: [
-                Text(cantidad.toString()),
+                Text(item.cantidad.toString()),
                 SizedBox(
                   width: 15.0,
                 ),
-                !check[id!]
-                    ? Text(nombre)
+                item.estado == 0
+                    ? Text(item.nombreItem)
                     : Text(
-                        nombre,
+                        item.nombreItem,
                         style: TextStyle(
                           decoration: TextDecoration.lineThrough,
                         ),
@@ -133,9 +131,10 @@ class _HomeState extends State<Home> {
               ],
             ),
             trailing: Checkbox(
-                value: check[id],
-                onChanged: (value) {
-                  check[id] = value!;
+                value: item.estado != 0,
+                onChanged: (value) async {
+                  item.estado = value! ? 1 : 0;
+                  await _itemOper.updateItem(item);
                   setState(() {});
                 }),
           ),

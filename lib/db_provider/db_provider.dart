@@ -9,14 +9,15 @@ class DBProvider {
 
   Future<Database> initDB() async {
     var documentsDirectory = await getApplicationDocumentsDirectory();
-    final path = join(documentsDirectory.path, 'items.db');
+    final path = join(documentsDirectory.path, 'lista.db');
     return await openDatabase(path, version: 1, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute('''
           CREATE TABLE Items(
           idItem INTEGER PRIMARY KEY,
           nombreItem STRING NOT NULL,
-          cantidad REAL NOT NULL
+          cantidad REAL NOT NULL,
+          estado INTEGER
           )
           ''');
     });

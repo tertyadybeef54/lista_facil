@@ -26,7 +26,7 @@ class ItemOperations {
   }
 
 //U - actualizar
-  Future<int> updateItems(ItemModel nuevoItem) async {
+  Future<int> updateItem(ItemModel nuevoItem) async {
     final db =await dbProvider.initDB();
     final res = await db.update('Items', nuevoItem.toJson(),
         where: 'idItem = ?', whereArgs: [nuevoItem.idItem]);
